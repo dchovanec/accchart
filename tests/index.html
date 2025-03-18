@@ -1,0 +1,29 @@
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TEST: Pay acceleration Web Component</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Pay Acceleration Chart</h1>
+        <!-- Chart container with salary bands data as a custom attribute -->
+        <div class="chart-container" id="chart-container">
+          <pay-acceleration-chart width="300" height="200" data='{
+            "bands": [
+                { "min": 0, "max": 100, "rate": 1 },
+                { "min": 100, "max": 200, "rate": 2.5 },
+                { "min": 200, "max": 300, "rate": 1.5 },
+                { "min": 300, "rate": 1.15 }
+            ],
+            "hasgate": true
+        }'></pay-acceleration-chart>
+        </div>
+        <h2>TESTS:</h1>
+        <div id="test-results"></div>
+    </div>
+    
+
+    <script src="../components/pay-curve-chart.js"></script>
+    <script src="tests.js"></script>
+</body>

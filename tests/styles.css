@@ -1,0 +1,81 @@
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 600px;
+    text-align: center;
+}
+
+h1 {
+    margin-bottom: 20px;
+}
+
+.chart-container {
+    width: 400px;
+    height: 250px;
+    margin: 0 auto;
+}
+
+#test-results {
+    font-family: Arial, sans-serif;
+    font-size: small;
+    margin-top: 20px;
+    display: block;
+    text-align: left;
+}
+.test-set {
+    border: 1px solid #ccc;
+    margin: 10px 0;
+    padding: 10px;
+}
+
+.test-set-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+}
+
+.test-set-header h3 {
+    margin: 0;
+}
+
+.test-set-content {
+    margin-top: 10px;
+}
+
+.test-case {
+    margin: 5px 0;
+}
+
+.pass {
+    color: green;
+}
+
+.fail {
+    color: red;
+}
+
+button {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #0056b3;
+}
