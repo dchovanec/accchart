@@ -91,10 +91,27 @@ class PayAccelerationChart extends HTMLElement {
     }
 
     /**
-     * Render the chart
+     * Called when an observed attribute changes
+     * @param {string} name - The name of the attribute that changed    
+     * @param {string} oldValue - The old value of the attribute
+     * @param {string} newValue - The new value of the attribute
+     * @private
      */
-    render() {
-        this.#drawChart();
+    attributeChangedCallback(name, oldValue, newValue) {
+        if (name === "data" && newValue) {
+            try {
+                this.data = JSON.parse(newValue);
+            } catch (error) {
+                console.error("Invalid data attribute:", error);
+                this.data = { bands: [] };; // Fallback to empty array
+            }
+            this.#generateChartData();
+        } else if (name === "width" && newValue) {
+            this.width = parseInt(newValue, 10);
+        } else if (name === "height" && newValue) {
+            this.height = parseInt(newValue, 10);
+        }
+        this.render();
     }
 
     /**
@@ -127,30 +144,6 @@ class PayAccelerationChart extends HTMLElement {
      */
     #cY(value) {
         return this.height - this.#padding.bottom - this.#padding.top - value * this.#scale.y;
-    }
-
-    /**
-     * Called when an observed attribute changes
-     * @param {string} name - The name of the attribute that changed    
-     * @param {string} oldValue - The old value of the attribute
-     * @param {string} newValue - The new value of the attribute
-     * @private
-     */
-    attributeChangedCallback(name, oldValue, newValue) {
-        if (name === "data" && newValue) {
-            try {
-                this.data = JSON.parse(newValue);
-            } catch (error) {
-                console.error("Invalid data attribute:", error);
-                this.data = { bands: [] };; // Fallback to empty array
-            }
-            this.#generateChartData();
-        } else if (name === "width" && newValue) {
-            this.width = parseInt(newValue, 10);
-        } else if (name === "height" && newValue) {
-            this.height = parseInt(newValue, 10);
-        }
-        this.render();
     }
 
     /**
@@ -236,7 +229,7 @@ class PayAccelerationChart extends HTMLElement {
             const text = document.createElementNS(svgNS, "text");
             text.setAttribute("x", x);
             text.setAttribute("y", this.#cY(0) + 20);
-            text.classList.add("axis-label");
+            text.classList.add("axis-label", "x-axis-label");
             text.textContent = `${value}%`;
             svg.appendChild(text);
         });
@@ -270,7 +263,16 @@ class PayAccelerationChart extends HTMLElement {
     }
 
     // Draw the chart using SVG
-    #drawChart() {
+    render() {
+
+        // check input parameters
+        if (!this.data || !this.data.bands || this.data.bands.length === 0
+            || !this.width || !this.height) {
+            // Don't render if the data is missing
+            this.shadowRoot.innerHTML = '';
+            return;
+        }
+
         const payBands = this.data;
         const svgNS = "http://www.w3.org/2000/svg";
         const oneRem = parseFloat(
