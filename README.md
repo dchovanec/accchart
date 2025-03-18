@@ -34,9 +34,9 @@ Adjust the styling of the chart components in the pay-curve-chart.js. CSS is at 
 
 Checkout the example running under github pages: [Examples](https://dchovanec.github.io/accchart/examples/)
 
-## Tests
+## Unit Tests
 
-Unit test results here: [Examples](https://dchovanec.github.io/accchart/tests/)
+Unit test results here: [unit tests](https://dchovanec.github.io/accchart/tests/)
 
 ## License
 
