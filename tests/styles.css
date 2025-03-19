@@ -48,6 +48,15 @@ h1 {
     cursor: pointer;
 }
 
+.test-header-container {
+    display: flex;
+    align-items: center;
+}
+
+.test-set-counter {
+    margin-right: 10px;
+}
+
 .test-set-header h3 {
     margin: 0;
 }

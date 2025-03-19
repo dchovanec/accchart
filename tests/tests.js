@@ -7,11 +7,17 @@ document.addEventListener("DOMContentLoaded", () => {
         testCase.className = "test-case";
         testCase.innerHTML = `${testName}: <span class="${passed ? 'pass' : 'fail'}">${passed ? 'PASS' : 'FAIL'}</span>`;
         testSet.appendChild(testCase);
+
+        // update the test counter
+        const testCounter = testSet.parentElement.querySelector(".test-set-counter");
+        const [passedCount, allCount] = testCounter.textContent.match(/\d+/g).map(Number);
+        testCounter.textContent = `[${passedCount + (passed ? 1 : 0)}/${allCount + 1}] passed`;
+
         return passed; // Return whether the test passed
     }
 
     // Helper function to display test set
-    function displayTestSet(testSetName) {
+    function displayTestSet(testSetName, testData) {
         const testSet = document.createElement("div");
         testSet.className = "test-set";
 
@@ -24,13 +30,27 @@ document.addEventListener("DOMContentLoaded", () => {
         content.className = "test-set-content";
         testSet.appendChild(content);
 
+        const testHeaderContainer = document.createElement("div");
+        testHeaderContainer.className = "test-header-container";
+        header.appendChild(testHeaderContainer);
+
+        const testCounter = document.createElement("div");
+        testCounter.className = "test-set-counter";
+        testCounter.innerHTML = "[0/0] passed";
+        testHeaderContainer.appendChild(testCounter);
+
         // Add a button to toggle visibility
         const toggleButton = document.createElement("button");
         toggleButton.textContent = "Toggle";
         toggleButton.addEventListener("click", () => {
+            if (content.style.display === "none") {
+                // Load the test data into the component
+                const svgComponent = document.querySelector("pay-acceleration-chart");
+                svgComponent.setAttribute("data", JSON.stringify(testData));
+            }
             content.style.display = content.style.display === "none" ? "block" : "none";
         });
-        header.appendChild(toggleButton);
+        testHeaderContainer.appendChild(toggleButton);
 
         testResults.appendChild(testSet);
         return content; // Return the content container for adding test results
@@ -49,10 +69,10 @@ document.addEventListener("DOMContentLoaded", () => {
         let passed = false;
         try {
             const svgComponent = document.querySelector("pay-acceleration-chart");
-            const axis = svgComponent.shadowRoot.querySelectorAll(".axis-title");
-            passed = axis.length === 2;
+            const label = svgComponent.shadowRoot.querySelectorAll(".axis-title");
+            passed = label.length === 2;
         } finally {
-            return displayTestResult("Component has 2 axis rendered", passed, testSet);
+            return displayTestResult("Component has 2 axis titles rendered", passed, testSet);
         }
     }
     // Check the axis title text
@@ -134,10 +154,33 @@ document.addEventListener("DOMContentLoaded", () => {
             return displayTestResult("Gate met label is rendered", passed, testSet);
         }
     }
+    // check if all kicker labels are rendered
+    function testKickerLabels(data, testSet) {
+        let passed = false;
+        try {
+            const svgComponent = document.querySelector("pay-acceleration-chart");
+            const label = svgComponent.shadowRoot.querySelectorAll(".band-rate-label");
+            passed = label.length === data.bands.length;
+        } finally {
+            return displayTestResult("All kicker labels are rendered", passed, testSet);
+        }
+    }
+    // check if the accleration line is rendered
+    function testAccelerationLine(data, testSet) {
+        let passed = false;
+        try {
+            const svgComponent = document.querySelector("pay-acceleration-chart");
+            const line = svgComponent.shadowRoot.querySelector("path.chart-line");
+            passed = line !== null;
+        } finally {
+            return displayTestResult("Acceleration line is rendered", passed, testSet);
+        }
+    }
+
 
     // Run all tests for a given data set
     function runTestSet(testSetName, data) {
-        const testSetContent = displayTestSet(testSetName);
+        const testSetContent = displayTestSet(testSetName, data);
         let allPassed = true;
 
         // Run individual tests
@@ -149,7 +192,8 @@ document.addEventListener("DOMContentLoaded", () => {
         allPassed &= testAxisLabelsY(data, testSetContent);
         allPassed &= testGateNotMet(data, testSetContent);
         allPassed &= testGateMet(data, testSetContent);
-
+        allPassed &= testKickerLabels(data, testSetContent);
+        allPassed &= testAccelerationLine(data, testSetContent);
         // Collapse the test set if all tests passed
         if (allPassed) {
             testSetContent.style.display = "none";
@@ -174,13 +218,13 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         },
         {
-            testName: "Test 2: 2 bands, no gate",
+            testName: "Test 2: 2 bands, with gate",
             data : {
                 bands: [
                     { min: 0, max: 100, rate: 1 },
                     { min: 100, rate: 2 },
                 ],
-                hasgate: false
+                hasgate: true
             }
         },        
         {
